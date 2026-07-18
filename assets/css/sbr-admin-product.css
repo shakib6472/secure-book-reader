@@ -1,0 +1,30 @@
+/* Admin styles for the "Book Reader" product meta box. */
+
+.sbr-metabox h4 {
+	margin: 1em 0 0.5em;
+}
+
+.sbr-current-pdf .dashicons-pdf {
+	color: #b32d2e;
+	vertical-align: text-bottom;
+}
+
+.sbr-toc-table {
+	margin-top: 8px;
+}
+
+.sbr-toc-table .sbr-col-page {
+	width: 90px;
+}
+
+.sbr-toc-table .sbr-col-actions {
+	width: 40px;
+}
+
+.sbr-toc-table input[type="number"] {
+	width: 80px;
+}
+
+.sbr-toc-actions {
+	margin-top: 10px;
+}

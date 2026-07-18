@@ -55,6 +55,16 @@ class SBR_Plugin {
 	 * admin (Phase 2), secure endpoint (Phase 3), frontend reader (Phase 4+).
 	 */
 	private function load_modules() {
-		// Phase 2+: module files will be required and initialized here.
+		// Loaded on every request: admin-ajax also serves customer PDF requests,
+		// and the metabox class holds the shared meta key constants.
+		require_once SBR_PLUGIN_DIR . 'includes/admin/class-sbr-product-metabox.php';
+		require_once SBR_PLUGIN_DIR . 'includes/class-sbr-access.php';
+		require_once SBR_PLUGIN_DIR . 'includes/class-sbr-endpoint.php';
+
+		SBR_Endpoint::init();
+
+		if ( is_admin() ) {
+			SBR_Product_Metabox::init();
+		}
 	}
 }
