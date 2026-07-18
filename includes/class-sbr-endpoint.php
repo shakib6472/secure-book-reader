@@ -32,11 +32,6 @@ class SBR_Endpoint {
 		add_action( 'wp_ajax_nopriv_sbr_get_book', array( $self, 'deny_logged_out' ) );
 
 		add_action( 'wp_ajax_sbr_save_state', array( $self, 'save_state' ) );
-
-		// Temporary diagnostic endpoint for Phase 3 testing; removed once the
-		// reader UI (Phase 4) takes over nonce provisioning.
-		add_action( 'wp_ajax_sbr_test_access', array( $self, 'test_access' ) );
-		add_action( 'wp_ajax_nopriv_sbr_test_access', array( $self, 'test_access_logged_out' ) );
 	}
 
 	/**
@@ -147,46 +142,4 @@ class SBR_Endpoint {
 		wp_send_json_success();
 	}
 
-	/**
-	 * TEMPORARY (Phase 3 testing): reports the current user's access to a book
-	 * as JSON, including a ready-made stream URL when access is granted.
-	 */
-	public function test_access() {
-		$book_id = isset( $_GET['book_id'] ) ? absint( $_GET['book_id'] ) : 0;
-		$user_id = get_current_user_id();
-		$allowed = $book_id ? SBR_Access::can_read( $user_id, $book_id ) : false;
-
-		$data = array(
-			'loggedIn' => true,
-			'userId'   => $user_id,
-			'bookId'   => $book_id,
-			'canRead'  => $allowed,
-		);
-
-		if ( $allowed ) {
-			$data['streamUrl'] = self::get_stream_url( $book_id );
-
-			// Convenience: &open=1 redirects straight to the PDF stream,
-			// avoiding copy-paste errors with JSON-escaped URLs.
-			if ( ! empty( $_GET['open'] ) ) {
-				wp_safe_redirect( $data['streamUrl'] );
-				exit;
-			}
-		}
-
-		wp_send_json( $data, null, JSON_UNESCAPED_SLASHES );
-	}
-
-	/**
-	 * TEMPORARY (Phase 3 testing): logged-out variant of the diagnostic.
-	 */
-	public function test_access_logged_out() {
-		wp_send_json(
-			array(
-				'loggedIn' => false,
-				'canRead'  => false,
-			),
-			401
-		);
-	}
 }

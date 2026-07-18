@@ -181,6 +181,7 @@
 			});
 
 			return renderTask.promise.then(function () {
+				drawWatermark(canvas, viewport, dpr);
 				holder.appendChild(canvas);
 
 				// Double rAF so the transition runs after the canvas is painted.
@@ -191,6 +192,32 @@
 				});
 			});
 		});
+	}
+
+	/**
+	 * Stamps the buyer's email diagonally into the rendered page pixels.
+	 * Part of the canvas itself, so it survives screenshots and cannot be
+	 * removed from the DOM.
+	 */
+	function drawWatermark(canvas, viewport, dpr) {
+		if (!cfg.watermark) {
+			return;
+		}
+
+		var ctx = canvas.getContext('2d');
+		var fontSize = Math.max(14, Math.floor(viewport.width / 26));
+
+		ctx.save();
+		ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+		ctx.globalAlpha = 0.09;
+		ctx.fillStyle = '#1a1a2e';
+		ctx.font = '600 ' + fontSize + 'px sans-serif';
+		ctx.textAlign = 'center';
+		ctx.textBaseline = 'middle';
+		ctx.translate(viewport.width / 2, viewport.height / 2);
+		ctx.rotate(-Math.PI / 6);
+		ctx.fillText(cfg.watermark, 0, 0);
+		ctx.restore();
 	}
 
 	/**
@@ -785,6 +812,31 @@
 	if (window.innerWidth < 768) {
 		document.body.classList.add('sbr-toc-closed');
 	}
+
+	/* ------------------------------------------------------------------ *
+	 * View-only hardening: no right-click, no drag-save, no Ctrl+P/S.
+	 * (Deterrents against casual copying, not DRM.)
+	 * ------------------------------------------------------------------ */
+
+	document.addEventListener('contextmenu', function (event) {
+		event.preventDefault();
+	});
+
+	document.addEventListener('dragstart', function (event) {
+		event.preventDefault();
+	});
+
+	document.addEventListener('keydown', function (event) {
+		if (!event.ctrlKey && !event.metaKey) {
+			return;
+		}
+
+		var key = event.key.toLowerCase();
+
+		if (key === 'p' || key === 's') {
+			event.preventDefault();
+		}
+	});
 
 	boot();
 })();

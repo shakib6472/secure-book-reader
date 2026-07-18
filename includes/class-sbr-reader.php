@@ -122,6 +122,7 @@ class SBR_Reader {
 			'toc'        => is_array( $toc ) ? array_values( $toc ) : array(),
 			'ajaxUrl'    => admin_url( 'admin-ajax.php' ),
 			'stateNonce' => wp_create_nonce( 'sbr_state_' . $book_id ),
+			'watermark'  => wp_get_current_user()->user_email,
 			'lastPage'   => (int) get_user_meta( $user_id, 'sbr_last_page_' . $book_id, true ),
 			'bookmarks'  => is_array( $bookmarks ) ? array_map( 'intval', $bookmarks ) : array(),
 			'i18n'       => array(

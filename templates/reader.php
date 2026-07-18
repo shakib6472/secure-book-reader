@@ -103,6 +103,8 @@ $sbr_ver  = SBR_VERSION;
 
 	</div>
 
+	<div id="sbr-print-notice"><?php esc_html_e( 'Printing is not available for this book.', 'secure-book-reader' ); ?></div>
+
 	<script>window.SBR_READER = <?php echo wp_json_encode( $sbr_data ); ?>;</script>
 	<script src="<?php echo esc_url( SBR_PLUGIN_URL . 'assets/js/sbr-reader.js?ver=' . $sbr_ver ); ?>"></script>
 </body>

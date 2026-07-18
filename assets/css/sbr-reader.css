@@ -21,6 +21,33 @@ body.sbr-reader-body {
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
 	background: var(--sbr-bg);
 	color: var(--sbr-text);
+	/* View-only reader: no text selection. */
+	-webkit-user-select: none;
+	user-select: none;
+}
+
+/* Typing fields still need selection to work naturally. */
+#sbr-search-input,
+#sbr-page-input {
+	-webkit-user-select: text;
+	user-select: text;
+}
+
+/* Printing produces a blank page with a notice instead of the book. */
+#sbr-print-notice {
+	display: none;
+}
+
+@media print {
+	#sbr-app {
+		display: none !important;
+	}
+
+	#sbr-print-notice {
+		display: block;
+		padding: 40px;
+		font-size: 16px;
+	}
 }
 
 #sbr-app {
