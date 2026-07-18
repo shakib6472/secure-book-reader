@@ -31,6 +31,8 @@ class SBR_Endpoint {
 		add_action( 'wp_ajax_sbr_get_book', array( $self, 'serve_book' ) );
 		add_action( 'wp_ajax_nopriv_sbr_get_book', array( $self, 'deny_logged_out' ) );
 
+		add_action( 'wp_ajax_sbr_save_state', array( $self, 'save_state' ) );
+
 		// Temporary diagnostic endpoint for Phase 3 testing; removed once the
 		// reader UI (Phase 4) takes over nonce provisioning.
 		add_action( 'wp_ajax_sbr_test_access', array( $self, 'test_access' ) );
@@ -102,6 +104,47 @@ class SBR_Endpoint {
 
 		readfile( $path );
 		exit;
+	}
+
+	/**
+	 * Saves the reader state (last-read page and/or bookmarks) to user meta.
+	 * Called by the reader JS (debounced fetch + sendBeacon on page close).
+	 */
+	public function save_state() {
+		$book_id = isset( $_POST['book_id'] ) ? absint( $_POST['book_id'] ) : 0;
+		$nonce   = isset( $_POST['nonce'] ) ? sanitize_key( $_POST['nonce'] ) : '';
+
+		if ( ! $book_id || ! wp_verify_nonce( $nonce, 'sbr_state_' . $book_id ) ) {
+			wp_send_json_error( null, 403 );
+		}
+
+		$user_id = get_current_user_id();
+
+		if ( ! SBR_Access::can_read( $user_id, $book_id ) ) {
+			wp_send_json_error( null, 403 );
+		}
+
+		if ( isset( $_POST['page'] ) ) {
+			$page = absint( $_POST['page'] );
+
+			if ( $page >= 1 ) {
+				update_user_meta( $user_id, 'sbr_last_page_' . $book_id, $page );
+			}
+		}
+
+		if ( isset( $_POST['bookmarks'] ) ) {
+			$raw = json_decode( wp_unslash( $_POST['bookmarks'] ), true );
+
+			if ( is_array( $raw ) ) {
+				$bookmarks = array_values( array_unique( array_filter( array_map( 'absint', $raw ) ) ) );
+				sort( $bookmarks );
+				$bookmarks = array_slice( $bookmarks, 0, 500 );
+
+				update_user_meta( $user_id, 'sbr_bookmarks_' . $book_id, $bookmarks );
+			}
+		}
+
+		wp_send_json_success();
 	}
 
 	/**

@@ -29,8 +29,37 @@ $sbr_ver  = SBR_VERSION;
 			<a id="sbr-back" href="<?php echo esc_url( $sbr_data['backUrl'] ); ?>">
 				<span class="sbr-chevron">&#8249;</span> <?php esc_html_e( 'Back', 'secure-book-reader' ); ?>
 			</a>
-			<div id="sbr-toolbar-actions"><!-- search / zoom / bookmark arrive in Phase 6 --></div>
+			<div id="sbr-toolbar-actions">
+				<button id="sbr-search-btn" class="sbr-icon-btn" type="button" title="<?php esc_attr_e( 'Search in book', 'secure-book-reader' ); ?>">
+					<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+				</button>
+				<div id="sbr-zoom-group">
+					<button id="sbr-zoom-out" class="sbr-icon-btn" type="button" title="<?php esc_attr_e( 'Zoom out', 'secure-book-reader' ); ?>">&minus;</button>
+					<span id="sbr-zoom-label">100%</span>
+					<button id="sbr-zoom-in" class="sbr-icon-btn" type="button" title="<?php esc_attr_e( 'Zoom in', 'secure-book-reader' ); ?>">+</button>
+				</div>
+				<button id="sbr-bmlist-btn" class="sbr-icon-btn" type="button" title="<?php esc_attr_e( 'Bookmarks', 'secure-book-reader' ); ?>">
+					<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M6 3h12v18l-6-4.5L6 21z"/></svg>
+				</button>
+			</div>
 		</header>
+
+		<div id="sbr-search-panel" class="sbr-dropdown" hidden>
+			<div class="sbr-dropdown-head">
+				<input type="search" id="sbr-search-input" placeholder="<?php esc_attr_e( 'Search in book…', 'secure-book-reader' ); ?>" />
+				<button id="sbr-search-close" class="sbr-icon-btn" type="button" title="<?php esc_attr_e( 'Close', 'secure-book-reader' ); ?>">&times;</button>
+			</div>
+			<div id="sbr-search-status"></div>
+			<ul id="sbr-search-results" class="sbr-dropdown-list"></ul>
+		</div>
+
+		<div id="sbr-bm-panel" class="sbr-dropdown" hidden>
+			<div class="sbr-dropdown-head">
+				<span class="sbr-dropdown-title"><?php esc_html_e( 'Bookmarks', 'secure-book-reader' ); ?></span>
+				<button id="sbr-bm-close" class="sbr-icon-btn" type="button" title="<?php esc_attr_e( 'Close', 'secure-book-reader' ); ?>">&times;</button>
+			</div>
+			<ul id="sbr-bm-list" class="sbr-dropdown-list"></ul>
+		</div>
 
 		<div id="sbr-body">
 
@@ -58,7 +87,11 @@ $sbr_ver  = SBR_VERSION;
 		</div>
 
 		<footer id="sbr-bottombar">
-			<div id="sbr-bottom-left"><!-- bookmark toggle arrives in Phase 6 --></div>
+			<div id="sbr-bottom-left">
+				<button id="sbr-bm-toggle" class="sbr-icon-btn" type="button" title="<?php esc_attr_e( 'Bookmark this page', 'secure-book-reader' ); ?>">
+					<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M6 3h12v18l-6-4.5L6 21z"/></svg>
+				</button>
+			</div>
 			<input type="range" id="sbr-slider" min="1" max="1" value="1" step="1" aria-label="<?php esc_attr_e( 'Reading progress', 'secure-book-reader' ); ?>" />
 			<div id="sbr-pager">
 				<button id="sbr-prev" type="button" title="<?php esc_attr_e( 'Previous page', 'secure-book-reader' ); ?>">&#8249;</button>

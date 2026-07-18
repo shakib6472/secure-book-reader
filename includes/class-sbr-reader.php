@@ -107,22 +107,34 @@ class SBR_Reader {
 			);
 		}
 
-		$toc = get_post_meta( $book_id, SBR_Product_Metabox::META_TOC, true );
+		$toc       = get_post_meta( $book_id, SBR_Product_Metabox::META_TOC, true );
+		$user_id   = get_current_user_id();
+		$bookmarks = get_user_meta( $user_id, 'sbr_bookmarks_' . $book_id, true );
 
 		self::$template_data = array(
-			'bookId'    => $book_id,
-			'bookTitle' => get_the_title( $book_id ),
-			'coverUrl'  => (string) get_the_post_thumbnail_url( $book_id, 'medium' ),
-			'streamUrl' => SBR_Endpoint::get_stream_url( $book_id ),
-			'pdfjsUrl'  => SBR_PLUGIN_URL . 'assets/pdfjs/pdf.min.mjs',
-			'workerUrl' => SBR_PLUGIN_URL . 'assets/pdfjs/pdf.worker.min.mjs',
-			'backUrl'   => get_permalink( $book_id ),
-			'toc'       => is_array( $toc ) ? array_values( $toc ) : array(),
-			'i18n'      => array(
-				'loadError'  => __( 'Could not load the book. Please refresh the page or try again later.', 'secure-book-reader' ),
-				'pageLabel'  => __( 'Page', 'secure-book-reader' ),
-				'contents'   => __( 'Contents', 'secure-book-reader' ),
-				'pagesCount' => __( 'pages', 'secure-book-reader' ),
+			'bookId'     => $book_id,
+			'bookTitle'  => get_the_title( $book_id ),
+			'coverUrl'   => (string) get_the_post_thumbnail_url( $book_id, 'medium' ),
+			'streamUrl'  => SBR_Endpoint::get_stream_url( $book_id ),
+			'pdfjsUrl'   => SBR_PLUGIN_URL . 'assets/pdfjs/pdf.min.mjs',
+			'workerUrl'  => SBR_PLUGIN_URL . 'assets/pdfjs/pdf.worker.min.mjs',
+			'backUrl'    => get_permalink( $book_id ),
+			'toc'        => is_array( $toc ) ? array_values( $toc ) : array(),
+			'ajaxUrl'    => admin_url( 'admin-ajax.php' ),
+			'stateNonce' => wp_create_nonce( 'sbr_state_' . $book_id ),
+			'lastPage'   => (int) get_user_meta( $user_id, 'sbr_last_page_' . $book_id, true ),
+			'bookmarks'  => is_array( $bookmarks ) ? array_map( 'intval', $bookmarks ) : array(),
+			'i18n'       => array(
+				'loadError'      => __( 'Could not load the book. Please refresh the page or try again later.', 'secure-book-reader' ),
+				'pageLabel'      => __( 'Page', 'secure-book-reader' ),
+				'contents'       => __( 'Contents', 'secure-book-reader' ),
+				'pagesCount'     => __( 'pages', 'secure-book-reader' ),
+				'searching'      => __( 'Searching…', 'secure-book-reader' ),
+				'searchProgress' => __( 'Searching… page %1$s of %2$s', 'secure-book-reader' ),
+				'searchResults'  => __( '%s results', 'secure-book-reader' ),
+				'searchNone'     => __( 'No results found.', 'secure-book-reader' ),
+				'bookmarksEmpty' => __( 'No bookmarks yet. Use the ribbon at the bottom left to bookmark the page you are reading.', 'secure-book-reader' ),
+				'removeBookmark' => __( 'Remove bookmark', 'secure-book-reader' ),
 			),
 		);
 
