@@ -60,8 +60,10 @@ class SBR_Plugin {
 		require_once SBR_PLUGIN_DIR . 'includes/admin/class-sbr-product-metabox.php';
 		require_once SBR_PLUGIN_DIR . 'includes/class-sbr-access.php';
 		require_once SBR_PLUGIN_DIR . 'includes/class-sbr-endpoint.php';
+		require_once SBR_PLUGIN_DIR . 'includes/class-sbr-reader.php';
 
 		SBR_Endpoint::init();
+		SBR_Reader::init();
 
 		if ( is_admin() ) {
 			SBR_Product_Metabox::init();
