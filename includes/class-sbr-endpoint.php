@@ -122,9 +122,16 @@ class SBR_Endpoint {
 
 		if ( $allowed ) {
 			$data['streamUrl'] = self::get_stream_url( $book_id );
+
+			// Convenience: &open=1 redirects straight to the PDF stream,
+			// avoiding copy-paste errors with JSON-escaped URLs.
+			if ( ! empty( $_GET['open'] ) ) {
+				wp_safe_redirect( $data['streamUrl'] );
+				exit;
+			}
 		}
 
-		wp_send_json( $data );
+		wp_send_json( $data, null, JSON_UNESCAPED_SLASHES );
 	}
 
 	/**
